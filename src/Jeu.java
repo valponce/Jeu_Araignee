@@ -1,15 +1,18 @@
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseEvent;
+
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
-import java.awt.Graphics;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+
+
 
 public class Jeu extends JFrame implements MouseListener{
-    JPanel p;
+    Dessin d;
     public static void main(String[] args) throws Exception {
         Jeu j= new Jeu();
     }
@@ -28,7 +31,11 @@ public class Jeu extends JFrame implements MouseListener{
         menubar.add(menu);
 
         JLabel l = new JLabel("Jeu de l'Araignée");
-        p = (JPanel) getContentPane();
+        
+        // Ajout du Jpanel d
+        d= new Dessin();
+        d.addMouseListener(this);
+        setContentPane(d);
         setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
         add(l);
 
@@ -38,27 +45,12 @@ public class Jeu extends JFrame implements MouseListener{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public void paint(Graphics g){
-        super.paint(g);
-        // dessin de la grille
-        // lignes
-        g.drawLine(100, 400, 400, 400);
-        g.drawLine(100, 200, 400, 200);
-        g.drawLine(100, 300, 400, 300);
-        g.drawLine(100, 100, 400, 100); 
-
-        //colones
-        g.drawLine(400, 100, 400, 400);
-        g.drawLine(300, 100, 300, 400);
-        g.drawLine(200, 100, 200, 400);
-        g.drawLine(100, 100, 100, 400);
-        p.addMouseListener(this);
-    }
-
     public void mousePressed(MouseEvent e){
-        Pion pion = new Pion(e.getX(),e.getY(),p);
+        d.addPion(e.getX(),e.getY());
+        d.repaint();
     }
-
+    
+    
     public void mouseClicked(MouseEvent e){
     }
 
@@ -66,6 +58,7 @@ public class Jeu extends JFrame implements MouseListener{
     }
 
     public void mouseEntered(MouseEvent e) {
+
     }
 
     public void mouseExited(MouseEvent e) {
@@ -76,4 +69,6 @@ public class Jeu extends JFrame implements MouseListener{
 
     public void mouseMoved(MouseEvent e) {
     }
+
+    
 }

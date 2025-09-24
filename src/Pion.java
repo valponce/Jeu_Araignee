@@ -1,3 +1,5 @@
+import java.awt.Graphics;
+
 public class Pion {
     private int x,y;
 
@@ -22,5 +24,7 @@ public class Pion {
         this.y = y;
     }
 
-   
+   public void dessinerPion(Graphics g){
+        g.drawOval(x, y,50,50);
+   }
 }
