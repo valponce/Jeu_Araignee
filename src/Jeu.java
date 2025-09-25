@@ -77,8 +77,16 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
 
     }
 
+    public boolean MouvPossible(int lastx,int lasty,int newx,int newy){
+        if ((newx==lastx+100 || newx==lastx-100 || newx==lastx) && (newy==lasty+100 || newy==lasty-100|| newy==lasty)){
+            return true;
+        }
+        else return false;
+    }
+
     public void mousePressed(MouseEvent e){
         d.caseSelectionne=appartient(e.getX(),e.getY());
+        
         if (nbpions<6){
             int numero=appartient(e.getX(),e.getY());
              //si la case est libre, on y dessine le pion du joueur dont c'est le tour
@@ -102,12 +110,21 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
     }
 
      public void mouseReleased(MouseEvent e) {
+        int numero=appartient(e.getX(),e.getY());
+        int lastx=d.xcases[d.caseSelectionne];
+        int lasty=d.ycases[d.caseSelectionne];
+        int newx=d.xcases[numero];
+        int newy=d.ycases[numero];
+        System.out.println(MouvPossible(lastx, lasty,newx,newy));
+        System.out.println(lastx+" "+lasty+" "+newx+" "+newy);
+        
+        
         if (nbpions>=6 && d.onMove){
         //on relâche la souirs après avoir déplacé un pion
         d.onMove=false;
-        int numero=appartient(e.getX(),e.getY());
-        // si la case d'arrivée est libre
-        if (d.tableau[numero]==0){
+        
+        // si la case d'arrivée est libre et le mouvement autorisée
+        if (d.tableau[numero]==0 && MouvPossible(lastx, lasty,newx,newy)){
             d.tableau[numero]=d.Turn;
             d.repaint();
             //changement de joueuer
