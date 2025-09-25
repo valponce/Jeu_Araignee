@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 
@@ -35,7 +36,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
         setJMenuBar(menubar);
 
         JMenu menu = new JMenu();
-        menu.setText("Mon Menu");
+        menu.setText("Nouvelle Partie");
         menubar.add(menu);
 
         JLabel l = new JLabel("Jeu de l'Araignée");
@@ -84,6 +85,34 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
         else return false;
     }
 
+    public boolean vainqueur(){
+        System.out.println(d.tableau[1]);
+        System.out.println(d.tableau[4]);
+        System.out.println(d.tableau[7]);
+        //vérification des colonnes
+        for (int i=0;i<3;i++){
+            if (d.tableau[i]!=0 && d.tableau[i]==d.tableau[i+3] && d.tableau[i]==d.tableau[i+6]){
+                return true;
+            }
+        }
+        //vérification des lignes
+        for (int i=0;i<9;i+=3){
+            if (d.tableau[i]!=0 && d.tableau[i]==d.tableau[i+1] && d.tableau[i]==d.tableau[i+2]){
+                return true;
+            }
+        }
+        
+        //vérifications des diagonales
+        if (d.tableau[0]!=0 && d.tableau[0]==d.tableau[4] && d.tableau[0]==d.tableau[8]){
+            return true;
+        }
+        if (d.tableau[2]!=0 && d.tableau[2]==d.tableau[4] && d.tableau[2]==d.tableau[6]){
+            return true;
+        }
+        else return false;
+
+    }
+
     public void mousePressed(MouseEvent e){
         d.caseSelectionne=appartient(e.getX(),e.getY());
         
@@ -115,8 +144,8 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
         int lasty=d.ycases[d.caseSelectionne];
         int newx=d.xcases[numero];
         int newy=d.ycases[numero];
-        System.out.println(MouvPossible(lastx, lasty,newx,newy));
-        System.out.println(lastx+" "+lasty+" "+newx+" "+newy);
+        //System.out.println(MouvPossible(lastx, lasty,newx,newy));
+        //System.out.println(lastx+" "+lasty+" "+newx+" "+newy);
         
         
         if (nbpions>=6 && d.onMove){
@@ -135,7 +164,9 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
             d.repaint();   
             
         }
-        
+        if (vainqueur()){
+            JOptionPane.showMessageDialog(this, "Joueur: "+d.Turn+" Vous avez gagné", "Gagnant", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     public void mouseEntered(MouseEvent e) {
