@@ -22,6 +22,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
     int nbpions;
     JMenuItem nouvellePartie;
     JMenuItem Quitter;
+    JLabel label;
     
     public static void main(String[] args) throws Exception {
         Jeu j= new Jeu();
@@ -35,6 +36,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         // setIconImage() permet de modifier l'icône de la JFrame.
         
         setSize(1000, 1000);
+        setTitle("Jeu de L'Araignée");
 
         // création d'une barre de menu
         JMenuBar menubar = new JMenuBar();
@@ -53,7 +55,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         menu.add(Quitter);
         menubar.add(menu);
 
-        JLabel l = new JLabel("Jeu de l'Araignée");
+        label = new JLabel("Au tour du Joueur 1");
         
         // Ajout du Jpanel d
         d= new Dessin();
@@ -61,7 +63,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         d.addMouseMotionListener(this);
         setContentPane(d);
         setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
-        add(l);
+        add(label);
 
         //placement des objets et affichage fenêtre 
         pack();
@@ -159,6 +161,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
 
                 //changement de joueuer
                 d.Turn= (d.Turn)%2+1;
+                label.setText("Au tour du Joueur"+d.Turn);
             }
             else{
                 System.out.println("Case occupée");
