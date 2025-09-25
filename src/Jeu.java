@@ -129,17 +129,21 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
 
     public void actionPerformed(ActionEvent e){
         if (e.getSource()==nouvellePartie){
-            for (int i=0;i<9;i++){
-            d.tableau[i]=0;
-            }
-            d.repaint();
-            nbpions=0;
-            d.onMove=false;
+            newGame();
         }
         else {if (e.getSource()==Quitter){
                 System.exit(0);
             }
         }
+    }
+
+    public void newGame(){
+        for (int i=0;i<9;i++){
+            d.tableau[i]=0;
+            }
+        d.repaint();
+        nbpions=0;
+        d.onMove=false;
     }
 
     public void mousePressed(MouseEvent e){
@@ -195,6 +199,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         }
         if (vainqueur()){
             JOptionPane.showMessageDialog(this, "Joueur: "+d.Turn+" Vous avez gagné", "Gagnant", JOptionPane.WARNING_MESSAGE);
+            newGame();
         }
     }
 
