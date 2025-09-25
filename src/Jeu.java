@@ -14,8 +14,9 @@ import javax.swing.JPanel;
 public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
     Dessin d;
     Boolean onMove;
-    int[] tableau;
+    
     int largeur;
+    
     public static void main(String[] args) throws Exception {
         Jeu j= new Jeu();
     }
@@ -24,7 +25,8 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
         super();
 
         onMove=false;
-        tableau = new int[6];
+        // Initialisation des coordonnées des centres des cases
+        
         largeur=300;
         // setIconImage() permet de modifier l'icône de la JFrame.
         
@@ -54,6 +56,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    //renvoie le numéro de la case correspondant aux coordonnées x,y
     public int appartient(int x,int y){
         // largeur= largeur de la grille, rajouter le décalage
         int b0,b1;
@@ -75,11 +78,9 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
         return b0+3*b1;
 
     }
+
     public void mousePressed(MouseEvent e){
-        d.addPion(e.getX(),e.getY());
-        System.out.println(appartient(e.getX(),e.getY()));
-        System.out.println(appartient(e.getX(),e.getY()));
-        d.repaint();
+        d.caseSelectionne=appartient(e.getX(),e.getY());
     }
     
     
@@ -87,6 +88,14 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
     }
 
      public void mouseReleased(MouseEvent e) {
+        int numero=appartient(e.getX(),e.getY());
+        // si la case correspondante est vide
+        if (d.tableau[numero]==0){
+            d.tableau[numero]=1;
+            d.repaint();
+        }
+        else {System.out.println("case occupée");}
+        d.onMove=false;
     }
 
     public void mouseEntered(MouseEvent e) {
@@ -97,8 +106,14 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
     } 
 
     public void mouseDragged(MouseEvent e) {
-            d.pions.set(0,new Pion(e.getX(),e.getY()));
-            d.repaint();
+        d.onMove=true;
+        if (d.tableau[d.caseSelectionne]==1){
+            d.tableau[d.caseSelectionne]=0;
+        }
+        d.x=e.getX();
+        d.y=e.getY();
+        d.repaint();
+        
     }
 
     public void mouseMoved(MouseEvent e) {

@@ -5,10 +5,24 @@ import javax.swing.JPanel;
 
 class Dessin extends JPanel {
     public ArrayList<Pion> pions;
+    int[] tableau;
+    boolean onMove;
+    int caseSelectionne;
+
+    //coordonnées actuelles du pion en mouvement
+    int x;
+    int y;
+
+    // coordonnées x et y du centre des cases
+    int[] xcases={150,250,350,150,250,350,150,250,350};
+    int[] ycases={150,150,150,250,250,250,350,350,350};
+
+    
 
     Dessin() {
         super();
-        pions = new ArrayList<Pion> ();
+        tableau = new int[9];
+
     }
 
     @Override
@@ -28,15 +42,17 @@ class Dessin extends JPanel {
         g.drawLine(100, 100, 100, 400);
         
         // dessin des pions placés
-        for (Pion p: pions){
-            p.dessinerPion(g);
+        if (onMove){
+           g.drawOval(x-25, y-25,50,50);
+        }
+        
+        for (int i=0;i<9;i++){
+            if (tableau[i]==1){
+                g.drawOval(xcases[i]-25, ycases[i]-25,50,50);
+            }
         }
     }
 
-    public void addPion(int px,int py){
-        if (pions.size()<6){
-        pions.add(new Pion(px,py));
-        }
-    }
+
 }
 
