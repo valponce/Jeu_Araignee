@@ -1,18 +1,10 @@
-## Getting Started
+création de l'interface de jeu.
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
-
-## Folder Structure
-
-The workspace contains two folders by default, where:
-
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
-
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+Etape1: 
+création d'une JFrame avec une barre menu, un titre dans JLabel et un Jpanel pour l'espece de jeu
+Etape 2:
+tracer la grille et à chaque fois qu'on clique, on met à jour le graphic en traçant un point
+classe point qui contient les coordonnées de celui-ci et une méthde pour le tracer ( pour l'instant sous la forme d'un cercle uniquement de taille fixe)
+classe Dessin, hérite Jpanel, permet de dessiner l'interface de jeu, c'est-à-dire la grille et les pions. 
+  Attributs = liste des pions présents sur la grille à tracer,
+  Méthodes: addPion et paint pour dessiner l'interface
