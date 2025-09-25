@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
     Dessin d;
     int largeur;
-    int nbCoup;
+    int nbpions;
     
     public static void main(String[] args) throws Exception {
         Jeu j= new Jeu();
@@ -25,7 +25,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
         super();
 
         largeur=300;
-        nbCoup=0;
+        nbpions=0;
         // setIconImage() permet de modifier l'icône de la JFrame.
         
         setSize(1000, 1000);
@@ -79,41 +79,45 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
 
     public void mousePressed(MouseEvent e){
         d.caseSelectionne=appartient(e.getX(),e.getY());
+        if (nbpions<6){
+            int numero=appartient(e.getX(),e.getY());
+             //si la case est libre, on y dessine le pion du joueur dont c'est le tour
+            if (d.tableau[numero]==0){
+                d.tableau[numero]=d.Turn;
+                d.repaint();
+                nbpions++;
+
+                //changement de joueuer
+                d.Turn= (d.Turn)%2+1;
+            }
+            else{
+                System.out.println("Case occupée");
+            }
+        }
     }
     
     
     public void mouseClicked(MouseEvent e){
+        
     }
 
      public void mouseReleased(MouseEvent e) {
-       
+        if (nbpions>=6 && d.onMove){
+        //on relâche la souirs après avoir déplacé un pion
+        d.onMove=false;
         int numero=appartient(e.getX(),e.getY());
-        // si la case correspondante est vide
+        // si la case d'arrivée est libre
         if (d.tableau[numero]==0){
-            // si on déplace un pion ok, sinon on vérifie s'il n'y a pas déjà trop de pions
-            if (!d.onMove && nbCoup >=6){
-                System.out.println("Phase 2:déplacement");
-            }
-            else {d.tableau[numero]=d.Turn;
-            d.onMove=false;
-            d.repaint();}
-
-            // changement de joueur
-            d.Turn= (d.Turn)%2+1;
-            nbCoup++;
-        }
-        else {
-            if (d.onMove){
-                d.tableau[d.caseSelectionne]=d.typePion;
-            }
-            d.onMove=false;
+            d.tableau[numero]=d.Turn;
             d.repaint();
-            //si on clique juste: typePion=0 si pas de mouvement avant ou le dernier pion déplacer
-            // caseselectionne= numero= la case occupée donc soit on efface le pion soit on le remplce par le même type que le dernier pion deplacé
-            // si numero!caseselectionne -> ok (après mouvement)
-            // si = -> remet à sa valeur initiale  
-           }
-        
+            //changement de joueuer
+            d.Turn= (d.Turn)%2+1;
+        }
+        else {// on redessine le pion à sa position initiale
+            d.tableau[d.caseSelectionne]=d.Turn;}
+            d.repaint();   
+            
+        }
         
     }
 
@@ -125,7 +129,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
     } 
 
     public void mouseDragged(MouseEvent e) {
-        if (nbCoup>=6){
+        if (nbpions>=6){
             // on vérifie que le pion sélectionné appartient bien au joueur dont c'est le tour
             if (d.tableau[d.caseSelectionne]==d.Turn){
                 d.onMove=true;
