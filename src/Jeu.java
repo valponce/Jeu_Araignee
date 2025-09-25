@@ -1,5 +1,7 @@
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BoxLayout;
@@ -7,16 +9,19 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 
 
 
-public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
+public class Jeu extends JFrame implements MouseListener,MouseMotionListener,ActionListener{
     Dessin d;
     int largeur;
     int nbpions;
+    JMenuItem nouvellePartie;
+    JMenuItem Quitter;
     
     public static void main(String[] args) throws Exception {
         Jeu j= new Jeu();
@@ -36,7 +41,16 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
         setJMenuBar(menubar);
 
         JMenu menu = new JMenu();
-        menu.setText("Nouvelle Partie");
+        menu.setText("Partie");
+
+        nouvellePartie = new JMenuItem("Nouvelle Partie");
+        nouvellePartie.addActionListener(this);
+        
+        Quitter = new JMenuItem("Quitter");
+        Quitter.addActionListener(this);
+
+        menu.add(nouvellePartie);
+        menu.add(Quitter);
         menubar.add(menu);
 
         JLabel l = new JLabel("Jeu de l'Araignée");
@@ -111,6 +125,21 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
         }
         else return false;
 
+    }
+
+    public void actionPerformed(ActionEvent e){
+        if (e.getSource()==nouvellePartie){
+            for (int i=0;i<9;i++){
+            d.tableau[i]=0;
+            }
+            d.repaint();
+            nbpions=0;
+            d.onMove=false;
+        }
+        else {if (e.getSource()==Quitter){
+                System.exit(0);
+            }
+        }
     }
 
     public void mousePressed(MouseEvent e){
