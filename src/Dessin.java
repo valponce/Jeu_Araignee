@@ -7,6 +7,8 @@ class Dessin extends JPanel {
     public ArrayList<Pion> pions;
     int[] tableau;
     boolean onMove;
+    int Turn;
+    int typePion;
     int caseSelectionne;
 
     //coordonnées actuelles du pion en mouvement
@@ -22,6 +24,7 @@ class Dessin extends JPanel {
     Dessin() {
         super();
         tableau = new int[9];
+        Turn=1;
 
     }
 
@@ -40,19 +43,27 @@ class Dessin extends JPanel {
         g.drawLine(300, 100, 300, 400);
         g.drawLine(200, 100, 200, 400);
         g.drawLine(100, 100, 100, 400);
+
         
-        // dessin des pions placés
+        // dessin du pion sélectionné en mouvement
         if (onMove){
+           if (typePion==1){
            g.drawOval(x-25, y-25,50,50);
+           }
+           else {g.drawRect(x-25, y-25,50,50);}
         }
         
+        
+        // dessin des pions placés
         for (int i=0;i<9;i++){
             if (tableau[i]==1){
                 g.drawOval(xcases[i]-25, ycases[i]-25,50,50);
             }
+            else {if (tableau[i]==2)
+                 {g.drawRect(xcases[i]-25, ycases[i]-25,50,50);}
+            }
+            
         }
     }
-
-
 }
 

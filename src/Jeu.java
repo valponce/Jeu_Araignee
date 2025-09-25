@@ -11,10 +11,9 @@ import javax.swing.JPanel;
 
 
 
+
 public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
     Dessin d;
-    Boolean onMove;
-    
     int largeur;
     
     public static void main(String[] args) throws Exception {
@@ -24,7 +23,6 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
     public Jeu() {
         super();
 
-        onMove=false;
         // Initialisation des coordonnées des centres des cases
         
         largeur=300;
@@ -88,14 +86,30 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
     }
 
      public void mouseReleased(MouseEvent e) {
+       
         int numero=appartient(e.getX(),e.getY());
         // si la case correspondante est vide
         if (d.tableau[numero]==0){
-            d.tableau[numero]=1;
+            d.tableau[numero]=d.Turn;
+            d.onMove=false;
             d.repaint();
+
+            // changement de joueur
+            d.Turn= (d.Turn)%2+1;
         }
-        else {System.out.println("case occupée");}
-        d.onMove=false;
+        else {
+            if (d.onMove){
+                d.tableau[d.caseSelectionne]=d.typePion;
+            }
+            d.onMove=false;
+            d.repaint();
+            //si on clique juste: typePion=0 si pas de mouvement avant ou le dernier pion déplacer
+            // caseselectionne= numero= la case occupée donc soit on efface le pion soit on le remplce par le même type que le dernier pion deplacé
+            // si numero!caseselectionne -> ok (après mouvement)
+            // si = -> remet à sa valeur initiale  
+           }
+        
+        
     }
 
     public void mouseEntered(MouseEvent e) {
@@ -106,14 +120,15 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
     } 
 
     public void mouseDragged(MouseEvent e) {
-        d.onMove=true;
-        if (d.tableau[d.caseSelectionne]==1){
+        // on vérifie que le pion sélectionné appartient bien au joueur dont c'est le tour
+        if (d.tableau[d.caseSelectionne]==d.Turn){
+            d.onMove=true;
+            d.typePion=d.tableau[d.caseSelectionne];
             d.tableau[d.caseSelectionne]=0;
         }
         d.x=e.getX();
         d.y=e.getY();
         d.repaint();
-        
     }
 
     public void mouseMoved(MouseEvent e) {
