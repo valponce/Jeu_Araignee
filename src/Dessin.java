@@ -34,7 +34,9 @@ class Dessin extends JPanel {
     }
 
     public void addPion(int px,int py){
+        if (pions.size()<6){
         pions.add(new Pion(px,py));
+        }
     }
 }
 

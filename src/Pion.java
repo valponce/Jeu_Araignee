@@ -25,6 +25,6 @@ public class Pion {
     }
 
    public void dessinerPion(Graphics g){
-        g.drawOval(x, y,50,50);
+        g.drawOval(x-25, y-25,50,50);
    }
 }
