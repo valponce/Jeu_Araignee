@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
     Dessin d;
     int largeur;
+    int nbCoup;
     
     public static void main(String[] args) throws Exception {
         Jeu j= new Jeu();
@@ -23,9 +24,8 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
     public Jeu() {
         super();
 
-        // Initialisation des coordonnées des centres des cases
-        
         largeur=300;
+        nbCoup=0;
         // setIconImage() permet de modifier l'icône de la JFrame.
         
         setSize(1000, 1000);
@@ -90,12 +90,17 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
         int numero=appartient(e.getX(),e.getY());
         // si la case correspondante est vide
         if (d.tableau[numero]==0){
-            d.tableau[numero]=d.Turn;
+            // si on déplace un pion ok, sinon on vérifie s'il n'y a pas déjà trop de pions
+            if (!d.onMove && nbCoup >=6){
+                System.out.println("Phase 2:déplacement");
+            }
+            else {d.tableau[numero]=d.Turn;
             d.onMove=false;
-            d.repaint();
+            d.repaint();}
 
             // changement de joueur
             d.Turn= (d.Turn)%2+1;
+            nbCoup++;
         }
         else {
             if (d.onMove){
@@ -120,15 +125,17 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener{
     } 
 
     public void mouseDragged(MouseEvent e) {
-        // on vérifie que le pion sélectionné appartient bien au joueur dont c'est le tour
-        if (d.tableau[d.caseSelectionne]==d.Turn){
-            d.onMove=true;
-            d.typePion=d.tableau[d.caseSelectionne];
-            d.tableau[d.caseSelectionne]=0;
+        if (nbCoup>=6){
+            // on vérifie que le pion sélectionné appartient bien au joueur dont c'est le tour
+            if (d.tableau[d.caseSelectionne]==d.Turn){
+                d.onMove=true;
+                d.typePion=d.tableau[d.caseSelectionne];
+                d.tableau[d.caseSelectionne]=0;
+            }
+            d.x=e.getX();
+            d.y=e.getY();
+            d.repaint();
         }
-        d.x=e.getX();
-        d.y=e.getY();
-        d.repaint();
     }
 
     public void mouseMoved(MouseEvent e) {
