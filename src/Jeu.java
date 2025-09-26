@@ -1,10 +1,14 @@
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -18,11 +22,11 @@ import javax.swing.JPanel;
 
 public class Jeu extends JFrame implements MouseListener,MouseMotionListener,ActionListener{
     Dessin d;
-    int largeur;
+    int taille;
     int nbpions;
-    JMenuItem nouvellePartie;
-    JMenuItem Quitter;
+    JMenuItem nouvellePartie,Quitter,colorJ1,colorJ2;
     JLabel label;
+    
     
     public static void main(String[] args) throws Exception {
         Jeu j= new Jeu();
@@ -31,10 +35,12 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
     public Jeu() {
         super();
 
-        largeur=300;
         nbpions=0;
-        // setIconImage() permet de modifier l'icône de la JFrame.
+        taille=300;
         
+        ImageIcon image = new ImageIcon("src/icon_toile.png");
+        setIconImage(image.getImage());
+        setLocationRelativeTo(null);
         setSize(1000, 1000);
         setTitle("Jeu de L'Araignée");
 
@@ -55,14 +61,27 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         menu.add(Quitter);
         menubar.add(menu);
 
+        JMenu menu1 = new JMenu();
+        menu1.setText("Couleur");
+        menubar.add(menu1);
+
+        colorJ1 = new JMenuItem("Couleur du Joueur 1");
+        colorJ2 = new JMenuItem("Couleur du Joueur 2");
+        menu1.add(colorJ1);
+        menu1.add(colorJ2);
+        colorJ1.addActionListener(this);
+        colorJ2.addActionListener(this);
+
         label = new JLabel("Au tour du Joueur 1");
+        label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        label.setVerticalAlignment(javax.swing.SwingConstants.NORTH);
         
         // Ajout du Jpanel d
         d= new Dessin();
         d.addMouseListener(this);
         d.addMouseMotionListener(this);
         setContentPane(d);
-        setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
+        setLayout(new BorderLayout());
         add(label);
 
         //placement des objets et affichage fenêtre 
@@ -75,18 +94,18 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
     public int appartient(int x,int y){
         // largeur= largeur de la grille, rajouter le décalage
         int b0,b1;
-        if (x-100<largeur/3){
+        if (x-d.x1<taille/3){
             b0=0;
         }
-        else if (x-100<2*largeur/3){
+        else if (x-d.x1<2*taille/3){
                 b0=1;
             }
             else {b0=2;}
 
-        if (y-100<largeur/3){
+        if (y-d.y1<taille/3){
             b1=0;
         }
-        else if (y-100<2*largeur/3){
+        else if (y-d.y1<2*taille/3){
                 b1=1;
             }
             else {b1=2;}
@@ -102,9 +121,6 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
     }
 
     public boolean vainqueur(){
-        System.out.println(d.tableau[1]);
-        System.out.println(d.tableau[4]);
-        System.out.println(d.tableau[7]);
         //vérification des colonnes
         for (int i=0;i<3;i++){
             if (d.tableau[i]!=0 && d.tableau[i]==d.tableau[i+3] && d.tableau[i]==d.tableau[i+6]){
@@ -136,7 +152,15 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         else {if (e.getSource()==Quitter){
                 System.exit(0);
             }
+            else{if (e.getSource()==colorJ1){
+                d.cJ1=JColorChooser.showDialog(this,"Choisisez la couleur pour le joueur 1",d.cJ1);
+                System.out.println(d.cJ1);
+            }
+                else
+                {d.cJ2=JColorChooser.showDialog(this,"Choisisez la couleur pour le joueur 1",d.cJ2);}
+            d.repaint();}
         }
+        
     }
 
     public void newGame(){
