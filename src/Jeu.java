@@ -26,6 +26,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
     int nbpions;
     JMenuItem nouvellePartie,Quitter,colorJ1,colorJ2;
     JLabel label;
+    String nom1,nom2;
     
     
     public static void main(String[] args) throws Exception {
@@ -44,6 +45,12 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         setSize(1000, 1000);
         setTitle("Jeu de L'Araignée");
 
+        nom1 = JOptionPane.showInputDialog(this, "Joueur1: Veuillez entrer votre pseudo", "Jeu de l'Araignée", JOptionPane.QUESTION_MESSAGE);
+        nom2 = JOptionPane.showInputDialog(this, "Joueur 2: Veuillez entrer votre pseudo:", "Jeu de l'Araignée", JOptionPane.QUESTION_MESSAGE);
+        
+        if (nom1==null){nom1="Joueur1";}
+        if (nom2==null){nom1="Joueur2";}
+        
         // création d'une barre de menu
         JMenuBar menubar = new JMenuBar();
         setJMenuBar(menubar);
@@ -65,14 +72,14 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         menu1.setText("Couleur");
         menubar.add(menu1);
 
-        colorJ1 = new JMenuItem("Couleur du Joueur 1");
-        colorJ2 = new JMenuItem("Couleur du Joueur 2");
+        colorJ1 = new JMenuItem("Couleur de "+nom1);
+        colorJ2 = new JMenuItem("Couleur de "+nom2);
         menu1.add(colorJ1);
         menu1.add(colorJ2);
         colorJ1.addActionListener(this);
         colorJ2.addActionListener(this);
 
-        label = new JLabel("Au tour du Joueur 1");
+        label = new JLabel("Au tour de "+nom1);
         label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         label.setVerticalAlignment(javax.swing.SwingConstants.NORTH);
         
@@ -185,7 +192,9 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
 
                 //changement de joueuer
                 d.Turn= (d.Turn)%2+1;
-                label.setText("Au tour du Joueur"+d.Turn);
+                if (d.Turn==1){label.setText("Au tour de "+nom1);}
+                else {label.setText("Au tour de "+nom2);}
+                
             }
             else{
                 System.out.println("Case occupée");
@@ -225,7 +234,10 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
             
         }
         if (vainqueur()){
-            JOptionPane.showMessageDialog(this, "Joueur: "+d.Turn+" Vous avez gagné", "Gagnant", JOptionPane.WARNING_MESSAGE);
+            String message;
+            if (d.Turn%2+1==1){message=nom1+" Vous avez gagné!";}
+            else {message=nom2+" Vous avez gagné!";}
+            JOptionPane.showMessageDialog(this, message, "Gagnant", JOptionPane.WARNING_MESSAGE);
             newGame();
         }
     }
