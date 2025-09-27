@@ -2,6 +2,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -80,6 +81,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         colorJ2.addActionListener(this);
 
         label = new JLabel("Au tour de "+nom1);
+        label.setFont(new Font("Serif", Font.BOLD, 24));
         label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         label.setVerticalAlignment(javax.swing.SwingConstants.NORTH);
         
@@ -95,6 +97,13 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         pack();
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+
+    public boolean ongrid(int px,int py){
+        if (d.x1<=px && px<=d.x1+taille && d.y1<=py && py<=d.y1+taille){
+            return true;
+        }
+        else return false;
     }
 
     //renvoie le numéro de la case correspondant aux coordonnées x,y
@@ -185,7 +194,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         if (nbpions<6){
             int numero=appartient(e.getX(),e.getY());
              //si la case est libre, on y dessine le pion du joueur dont c'est le tour
-            if (d.tableau[numero]==0){
+            if (d.tableau[numero]==0 && ongrid(e.getX(),e.getY())){
                 d.tableau[numero]=d.Turn;
                 d.repaint();
                 nbpions++;
@@ -222,7 +231,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         d.onMove=false;
         
         // si la case d'arrivée est libre et le mouvement autorisée
-        if (d.tableau[numero]==0 && MouvPossible(lastx, lasty,newx,newy)){
+        if (d.tableau[numero]==0 && MouvPossible(lastx, lasty,newx,newy) && ongrid(e.getX(),e.getY())){
             d.tableau[numero]=d.Turn;
             d.repaint();
             //changement de joueuer
