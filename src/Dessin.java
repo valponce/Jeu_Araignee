@@ -87,7 +87,6 @@ class Dessin extends JPanel {
         for (int i=0;i<9;i++){
             if (tableau[i]==1){
                 g2.setColor(cJ1);
-                System.out.println("Coord:"+xcases[i]+" "+ycases[i]);
                 g2.drawOval(xcases[i]-25, ycases[i]-25,50,50);
             }
             else {if (tableau[i]==2)
