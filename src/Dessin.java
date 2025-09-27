@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 
 class Dessin extends JPanel {
     int largeurPanel,hauteurPanel;
+    ArrayList<Integer> lastPosition;
     int[] tableau;
     boolean onMove;
     int Turn;
@@ -34,6 +35,7 @@ class Dessin extends JPanel {
         cJ2=Color.BLUE;
         tableau = new int[9];
         Turn=1;
+        lastPosition = new ArrayList<Integer> ();
         redimensionFrame(400,400);
     }
 

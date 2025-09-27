@@ -3,8 +3,10 @@ import java.awt.event.MouseMotionListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -27,7 +29,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
     Dessin d;
     int taille;
     int nbpions,s1,s2;
-    JMenuItem nouvellePartie,Quitter,colorJ1,colorJ2;
+    JMenuItem nouvellePartie,Quitter,colorJ1,colorJ2,undo;
     JLabel label,score1,score2;
     String nom1,nom2;
     
@@ -46,6 +48,9 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         taille=300;
         
         ImageIcon image = new ImageIcon("src/icon_toile.png");
+        ImageIcon carre = new ImageIcon("src/carre.png");
+        ImageIcon cercle = new ImageIcon("src/cercle.png");
+
         setIconImage(image.getImage());
         setLocationRelativeTo(null);
         setSize(1000, 1000);
@@ -57,12 +62,53 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         if (nom1==null){nom1="Joueur1";}
         if (nom2==null){nom1="Joueur2";}
         
+        JPanel toppanel = new JPanel();
+        JPanel panel=new JPanel();
+        toppanel.setLayout(new BoxLayout(toppanel, BoxLayout.Y_AXIS));
+
+        // centrer horizontalement
+        label = new JLabel("Au tour de "+nom1);
+        label.setFont(new Font("Serif", Font.BOLD, 24));
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        //Score joueur 1
+        score1 = new JLabel("Score de "+nom1+": "+s1);
+        score1.setFont(new Font("Serif", Font.BOLD, 20));
+        score1.setAlignmentX(Component.CENTER_ALIGNMENT);
+        score1.setIcon(carre);
+
+        // Score joueur 2
+        score2 = new JLabel("Score de " + nom2 + ": "+s2);
+        score2.setFont(new Font("Serif", Font.BOLD, 20));
+        score2.setAlignmentX(Component.CENTER_ALIGNMENT);
+        score2.setIcon(cercle);
+
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER,25,25));
+        panel.add(score1);
+        panel.add(score2);  
+
+        toppanel.add(label);
+        toppanel.add(panel);
+        
+        // Ajout du Jpanel d
+        d= new Dessin();
+        d.addMouseListener(this);
+        d.addMouseMotionListener(this);
+    
+        // Ajout dans la fenêtre
+        setLayout(new BorderLayout());
+        add(toppanel, BorderLayout.NORTH);
+        add(d, BorderLayout.CENTER);
+
         // création d'une barre de menu
         JMenuBar menubar = new JMenuBar();
         setJMenuBar(menubar);
 
         JMenu menu = new JMenu();
         menu.setText("Partie");
+
+        undo= new JMenuItem("Undo");
+        undo.addActionListener(new Undo(d,this));
 
         nouvellePartie = new JMenuItem("Nouvelle Partie");
         nouvellePartie.addActionListener(this);
@@ -71,9 +117,11 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         Quitter.addActionListener(this);
 
         menu.add(nouvellePartie);
+        menu.add(undo);
         menu.add(Quitter);
         menubar.add(menu);
 
+        //Création d'un menu pour changer les couleurs des joueurs
         JMenu menu1 = new JMenu();
         menu1.setText("Couleur");
         menubar.add(menu1);
@@ -85,37 +133,6 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         colorJ1.addActionListener(this);
         colorJ2.addActionListener(this);
 
-        JPanel toppanel = new JPanel();
-        toppanel.setLayout(new BoxLayout(toppanel, BoxLayout.Y_AXIS));
-
-        // centrer horizontalement
-        label = new JLabel("Au tour de "+nom1);
-        label.setFont(new Font("Serif", Font.BOLD, 24));
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        //Score joueur 1
-        score1 = new JLabel("Score de "+nom1+": "+s1);
-        score1.setFont(new Font("Serif", Font.BOLD, 14));
-        score1.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // Score joueur 2
-        score2 = new JLabel("Score de " + nom2 + ": "+s2);
-        score2.setFont(new Font("Serif", Font.BOLD, 14));
-        score2.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        toppanel.add(label);
-        toppanel.add(score1);
-        toppanel.add(score2);  
-        
-        // Ajout du Jpanel d
-        d= new Dessin();
-        d.addMouseListener(this);
-        d.addMouseMotionListener(this);
-    
-        // Ajout dans la fenêtre
-        setLayout(new BorderLayout());
-        add(toppanel, BorderLayout.NORTH);
-        add(d, BorderLayout.CENTER);
         //placement des objets et affichage fenêtre 
         pack();
         setVisible(true);
@@ -155,7 +172,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
     public boolean MouvPossible(int lastx,int lasty,int newx,int newy){
         //retour sur la même case impossible
         if (newx==lastx && newy==lasty){return false;}
-        
+
         if ((newx==lastx+100 || newx==lastx-100 || newx==lastx) && (newy==lasty+100 || newy==lasty-100|| newy==lasty)){
             return true;
         }
@@ -225,6 +242,9 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
                 d.repaint();
                 nbpions++;
 
+                //Dernière action effectuée
+                d.lastPosition.add(numero);
+            
                 //changement de joueuer
                 d.Turn= (d.Turn)%2+1;
                 if (d.Turn==1){label.setText("Au tour de "+nom1);}
@@ -248,9 +268,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         int lasty=d.ycases[d.caseSelectionne];
         int newx=d.xcases[numero];
         int newy=d.ycases[numero];
-        //System.out.println(MouvPossible(lastx, lasty,newx,newy));
-        //System.out.println(lastx+" "+lasty+" "+newx+" "+newy);
-        
+    
         
         if (nbpions>=6 && d.onMove){
         //on relâche la souirs après avoir déplacé un pion
@@ -260,6 +278,10 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         if (d.tableau[numero]==0 && MouvPossible(lastx, lasty,newx,newy) && ongrid(e.getX(),e.getY())){
             d.tableau[numero]=d.Turn;
             d.repaint();
+
+            //Dernière action effectuée
+            d.lastPosition.add(numero);
+
             //changement de joueuer
             d.Turn= (d.Turn)%2+1;
         }
