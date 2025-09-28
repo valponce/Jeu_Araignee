@@ -228,6 +228,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
             }
         d.repaint();
         nbpions=0;
+        d.lastPosition.clear();
         d.onMove=false;
     }
 
@@ -244,7 +245,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
 
                 //Dernière action effectuée
                 d.lastPosition.add(numero);
-            
+                System.out.println(" "+d.lastPosition.get(d.lastPosition.size()-1));
                 //changement de joueuer
                 d.Turn= (d.Turn)%2+1;
                 if (d.Turn==1){label.setText("Au tour de "+nom1);}
@@ -279,9 +280,11 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
             d.tableau[numero]=d.Turn;
             d.repaint();
 
-            //Dernière action effectuée
+            //Dernière action effectuée: on stocke la position 
+            //du début du mouvement et la position finale à la suite
+            d.lastPosition.add(d.caseSelectionne);
             d.lastPosition.add(numero);
-
+           
             //changement de joueuer
             d.Turn= (d.Turn)%2+1;
         }
@@ -299,7 +302,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
             else {message=nom2+" Vous avez gagné!";
                 s2++;
                 score2.setText("Score de " + nom2 + ": "+s2);}
-            JOptionPane.showMessageDialog(this, message, "Gagnant", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, message, "Gagnant", JOptionPane.INFORMATION_MESSAGE);
             newGame();
         }
     }
