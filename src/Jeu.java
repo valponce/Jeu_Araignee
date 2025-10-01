@@ -71,7 +71,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         nom2 = JOptionPane.showInputDialog(this, "Joueur 2: Veuillez entrer votre pseudo:", "Jeu de l'Araignée", JOptionPane.QUESTION_MESSAGE);
         
         if (nom1==null){nom1="Joueur1";}
-        if (nom2==null){nom1="Joueur2";}
+        if (nom2==null){nom2="Joueur2";}
         
         JPanel toppanel = new JPanel();
         JPanel panel=new JPanel();
@@ -158,34 +158,15 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         nbpions=n;
     }
 
-    // Renvoie si la position donnée est dans la grille
-    public boolean ongrid(int px,int py){
-        if (d.x1<=px && px<=d.x1+taille && d.y1<=py && py<=d.y1+taille){
-            return true;
-        }
-        else return false;
-    }
-
-    // Renvoie le numéro de la case correspondant aux coordonnées x,y
+    // Renvoie le numéro de la case correspondant aux coordonnées x,y ou -1 si hors de la grille
     public int appartient(int x,int y){
-        int b0,b1;
-        if (x-d.x1<taille/3){
-            b0=0;
-        }
-        else if (x-d.x1<2*taille/3){
-                b0=1;
-            }
-            else {b0=2;}
-
-        if (y-d.y1<taille/3){
-            b1=0;
-        }
-        else if (y-d.y1<2*taille/3){
-                b1=1;
-            }
-            else {b1=2;}
-        return b0+3*b1;
-
+        // si la position est dans la grille, on cherche la bonne case
+        if (x >= d.x1 && x <= d.x1 + taille && y >= d.y1 && y <= d.y1 + taille) {
+            int b0 = (x - d.x1) / (taille / 3); // colonne
+            int b1 = (y - d.y1) / (taille / 3); // ligne
+            return b0 + 3 * b1;
+        } 
+        else {return -1;}
     }
 
     //Renvoie si le déplacement de la pièce est autorisée ou non
@@ -275,7 +256,7 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
             int numero=appartient(e.getX(),e.getY());
              
             //si la case est libre, on y dessine le pion du joueur dont c'est le tour
-            if (d.tableau[numero]==0 && ongrid(e.getX(),e.getY())){
+            if (numero!=-1 && d.tableau[numero]==0){
                 d.tableau[numero]=d.Turn;
                 d.repaint();
                 nbpions++;
@@ -300,33 +281,40 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
 
     public void mouseReleased(MouseEvent e) {
         int numero=appartient(e.getX(),e.getY());
+        System.out.println(numero+" ");
         int lastx=d.xcases[d.caseSelectionne];
         int lasty=d.ycases[d.caseSelectionne];
-        int newx=d.xcases[numero];
-        int newy=d.ycases[numero];
-    
         
         if (nbpions>=6 && d.onMove){
             //on relâche la souri après avoir déplacé un pion
             d.onMove=false;
-        
-            // si la case d'arrivée est libre, le mouvement est autorisée et on est sur la grille
-            if (d.tableau[numero]==0 && MouvPossible(lastx, lasty,newx,newy) && ongrid(e.getX(),e.getY())){
-                // on place et dessine le pion sur la grille
-                d.tableau[numero]=d.Turn;
-                d.repaint();
 
-                //Dernière action effectuée: on stocke la position 
-                //du début du mouvement et la position finale à la suite
-                d.lastPosition.add(d.caseSelectionne);
-                d.lastPosition.add(numero);
+            //si l'arrivée est sur la grille
+            if (numero!=-1){
+                int newx=d.xcases[numero];
+                int newy=d.ycases[numero];
+                // si la case d'arrivée est libre et le mouvement est autorisée
+                if (d.tableau[numero]==0 && MouvPossible(lastx, lasty,newx,newy)){
+                    // on place le pion sur la grille
+                    d.tableau[numero]=d.Turn;
+
+                    //Dernière action effectuée: on stocke la position 
+                    //du début du mouvement et la position finale à la suite
+                    d.lastPosition.add(d.caseSelectionne);
+                    d.lastPosition.add(numero);
            
-                //changement de joueuer
-                d.Turn= (d.Turn)%2+1;
+                    //changement de joueuer
+                    d.Turn= (d.Turn)%2+1;
+                }
+                else {// sinon redessine le pion à sa position initiale
+                    d.tableau[d.caseSelectionne]=d.Turn;}
             }
+            
             else {// sinon redessine le pion à sa position initiale
                 d.tableau[d.caseSelectionne]=d.Turn;}
-                d.repaint();   
+
+            // On redessine la grille
+            d.repaint();   
             
         }
         // Si trois pions sont alignés

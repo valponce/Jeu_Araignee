@@ -1,8 +1,6 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JFrame;
-
 class Undo implements ActionListener {
     private Jeu j;
     private Dessin d;
@@ -14,7 +12,6 @@ class Undo implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        //fonctionne pour nbpion<6 mais pas pour mouveent
         int n=d.lastPosition.size();
         if (n>0){
             d.tableau[d.lastPosition.get(n-1)]=0;

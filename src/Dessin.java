@@ -16,7 +16,7 @@ class Dessin extends JPanel {
     // Etat de la grille en temps réel: 0=case libre, 1= pion du joueur1, 2=pion du joueur2
     public int[] tableau;
 
-    // Déplacement d'un pion en cours ou non
+    // Déplacement d'un pion en cours ou non, pour savoir si la figure doit suivre la souris ou non
     public boolean onMove;
 
     //Entier 1 ou 2 pour savoir qui doit jouer
