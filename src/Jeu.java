@@ -1,12 +1,9 @@
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -26,25 +23,39 @@ import javax.swing.JPanel;
 
 
 public class Jeu extends JFrame implements MouseListener,MouseMotionListener,ActionListener{
-    Dessin d;
-    int taille;
-    int nbpions,s1,s2;
-    JMenuItem nouvellePartie,Quitter,colorJ1,colorJ2,undo;
-    JLabel label,score1,score2;
-    String nom1,nom2;
+    private Dessin d;
+
+    //taille de la grille
+    private int taille;
+
+    // nombre de pions sur la grille, score du joueur 1 et 2
+    private int nbpions,s1,s2;
+
+    private JMenuItem nouvellePartie,Quitter,colorJ1,colorJ2,undo;
+
+    // label affiche à qui est le tour
+    private JLabel label,score1,score2;
+
+    // Noms des joueurs
+    private String nom1,nom2;
     
     
     public static void main(String[] args) throws Exception {
         Jeu j= new Jeu();
     }
 
+
     public Jeu() {
         super();
 
+        // Aucun pion sur la grille initialement
         nbpions=0;
-        //score des joueurs
+
+        //scores des joueurs nuls
         s1=0;
         s2=0;
+        
+        //taille de la grille carrée
         taille=300;
         
         ImageIcon image = new ImageIcon("src/icon_toile.png");
@@ -139,6 +150,15 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    public int getNbpions() {
+        return nbpions;
+    }
+
+    public void setNbpions(int n) {
+        nbpions=n;
+    }
+
+    // Renvoie si la position donnée est dans la grille
     public boolean ongrid(int px,int py){
         if (d.x1<=px && px<=d.x1+taille && d.y1<=py && py<=d.y1+taille){
             return true;
@@ -146,9 +166,8 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         else return false;
     }
 
-    //renvoie le numéro de la case correspondant aux coordonnées x,y
+    // Renvoie le numéro de la case correspondant aux coordonnées x,y
     public int appartient(int x,int y){
-        // largeur= largeur de la grille, rajouter le décalage
         int b0,b1;
         if (x-d.x1<taille/3){
             b0=0;
@@ -169,16 +188,19 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
 
     }
 
+    //Renvoie si le déplacement de la pièce est autorisée ou non
     public boolean MouvPossible(int lastx,int lasty,int newx,int newy){
         //retour sur la même case impossible
         if (newx==lastx && newy==lasty){return false;}
 
+        // Autorise, les cases adjacentes même en diagonal
         if ((newx==lastx+100 || newx==lastx-100 || newx==lastx) && (newy==lasty+100 || newy==lasty-100|| newy==lasty)){
             return true;
         }
         else return false;
     }
 
+    // Renvoie si trois pions sont alignés
     public boolean vainqueur(){
         //vérification des colonnes
         for (int i=0;i<3;i++){
@@ -204,6 +226,24 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
 
     }
 
+
+    public void newGame(){
+        // Redessine la grille avec uniquement des cases vides
+        for (int i=0;i<9;i++){
+            d.tableau[i]=0;
+            }
+        d.repaint();
+
+        //Efface l'historique des positions, plus de pions sur la grille
+        d.lastPosition.clear();
+        nbpions=0;
+        // Retour à la phase 1 sans déplacement
+        d.onMove=false;
+    }
+
+
+
+    // Implémentation des méthodes de ActionListener
     public void actionPerformed(ActionEvent e){
         if (e.getSource()==nouvellePartie){
             newGame();
@@ -222,30 +262,27 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         
     }
 
-    public void newGame(){
-        for (int i=0;i<9;i++){
-            d.tableau[i]=0;
-            }
-        d.repaint();
-        nbpions=0;
-        d.lastPosition.clear();
-        d.onMove=false;
-    }
 
+
+    //Implémentation des méthodes MouseListener, MouseMotionListener
     public void mousePressed(MouseEvent e){
+        // Case contenant la position choisie
         d.caseSelectionne=appartient(e.getX(),e.getY());
         
+        // Phase1: Placement tant qu'il n'y a pas 6 pions sur la grille
         if (nbpions<6){
+            // numéro de la case contenant la position actuelle
             int numero=appartient(e.getX(),e.getY());
-             //si la case est libre, on y dessine le pion du joueur dont c'est le tour
+             
+            //si la case est libre, on y dessine le pion du joueur dont c'est le tour
             if (d.tableau[numero]==0 && ongrid(e.getX(),e.getY())){
                 d.tableau[numero]=d.Turn;
                 d.repaint();
                 nbpions++;
 
-                //Dernière action effectuée
+                //Mise à jour de l'historique avec la dernière action effectuée
                 d.lastPosition.add(numero);
-                System.out.println(" "+d.lastPosition.get(d.lastPosition.size()-1));
+                
                 //changement de joueuer
                 d.Turn= (d.Turn)%2+1;
                 if (d.Turn==1){label.setText("Au tour de "+nom1);}
@@ -258,12 +295,10 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
         }
     }
     
-    
     public void mouseClicked(MouseEvent e){
-        
     }
 
-     public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(MouseEvent e) {
         int numero=appartient(e.getX(),e.getY());
         int lastx=d.xcases[d.caseSelectionne];
         int lasty=d.ycases[d.caseSelectionne];
@@ -272,28 +307,31 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
     
         
         if (nbpions>=6 && d.onMove){
-        //on relâche la souirs après avoir déplacé un pion
-        d.onMove=false;
+            //on relâche la souri après avoir déplacé un pion
+            d.onMove=false;
         
-        // si la case d'arrivée est libre et le mouvement autorisée
-        if (d.tableau[numero]==0 && MouvPossible(lastx, lasty,newx,newy) && ongrid(e.getX(),e.getY())){
-            d.tableau[numero]=d.Turn;
-            d.repaint();
+            // si la case d'arrivée est libre, le mouvement est autorisée et on est sur la grille
+            if (d.tableau[numero]==0 && MouvPossible(lastx, lasty,newx,newy) && ongrid(e.getX(),e.getY())){
+                // on place et dessine le pion sur la grille
+                d.tableau[numero]=d.Turn;
+                d.repaint();
 
-            //Dernière action effectuée: on stocke la position 
-            //du début du mouvement et la position finale à la suite
-            d.lastPosition.add(d.caseSelectionne);
-            d.lastPosition.add(numero);
+                //Dernière action effectuée: on stocke la position 
+                //du début du mouvement et la position finale à la suite
+                d.lastPosition.add(d.caseSelectionne);
+                d.lastPosition.add(numero);
            
-            //changement de joueuer
-            d.Turn= (d.Turn)%2+1;
-        }
-        else {// on redessine le pion à sa position initiale
-            d.tableau[d.caseSelectionne]=d.Turn;}
-            d.repaint();   
+                //changement de joueuer
+                d.Turn= (d.Turn)%2+1;
+            }
+            else {// sinon redessine le pion à sa position initiale
+                d.tableau[d.caseSelectionne]=d.Turn;}
+                d.repaint();   
             
         }
+        // Si trois pions sont alignés
         if (vainqueur()){
+            // Affichage d'une fenêtre secondaire qui annonce le gagnant et mise à jour des scores
             String message;
             if (d.Turn%2+1==1){
                 message=nom1+" Vous avez gagné!";
@@ -302,7 +340,10 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
             else {message=nom2+" Vous avez gagné!";
                 s2++;
                 score2.setText("Score de " + nom2 + ": "+s2);}
+
             JOptionPane.showMessageDialog(this, message, "Gagnant", JOptionPane.INFORMATION_MESSAGE);
+            
+            // Lancement d'une nouvelle partie
             newGame();
         }
     }
@@ -315,13 +356,16 @@ public class Jeu extends JFrame implements MouseListener,MouseMotionListener,Act
     } 
 
     public void mouseDragged(MouseEvent e) {
+        // Phase2: Déplacement, déjà 6 pions sur la grille
         if (nbpions>=6){
             // on vérifie que le pion sélectionné appartient bien au joueur dont c'est le tour
             if (d.tableau[d.caseSelectionne]==d.Turn){
                 d.onMove=true;
-                d.typePion=d.tableau[d.caseSelectionne];
+                // Plus de pions à la position de départ
                 d.tableau[d.caseSelectionne]=0;
             }
+
+            // Position actuelle du pion
             d.x=e.getX();
             d.y=e.getY();
             d.repaint();

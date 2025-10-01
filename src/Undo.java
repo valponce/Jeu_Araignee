@@ -4,8 +4,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 
 class Undo implements ActionListener {
-    Jeu j;
-    Dessin d;
+    private Jeu j;
+    private Dessin d;
 
     public Undo(Dessin panel,Jeu jeu){
         d=panel;
@@ -21,7 +21,7 @@ class Undo implements ActionListener {
             d.lastPosition.remove(n-1);
             d.Turn= (d.Turn)%2+1;
             if (n<=6){
-                j.nbpions--;
+                j.setNbpions(j.getNbpions()-1);
             }
             else {// replace le pion à la position avant le mouvement
                 d.tableau[d.lastPosition.get(n-2)]=d.Turn;

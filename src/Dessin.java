@@ -7,32 +7,44 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 
 class Dessin extends JPanel {
-    int largeurPanel,hauteurPanel;
-    ArrayList<Integer> lastPosition;
-    int[] tableau;
-    boolean onMove;
-    int Turn;
-    int typePion;
-    int caseSelectionne;
-    Color cJ1,cJ2;
+    private int largeurPanel,hauteurPanel;
+    
+    // historique des actions des joueurs, d'abord les positions initilaes dans l'ordre
+    //puis pour chaque mouvement la case de départ et d'arriver
+    public ArrayList<Integer> lastPosition;
+
+    // Etat de la grille en temps réel: 0=case libre, 1= pion du joueur1, 2=pion du joueur2
+    public int[] tableau;
+
+    // Déplacement d'un pion en cours ou non
+    public boolean onMove;
+
+    //Entier 1 ou 2 pour savoir qui doit jouer
+    public int Turn;
+    
+    //numero de la case sélectionnée
+    public int caseSelectionne;
+
+    //Couleurs pour les pions des joueurs
+    public Color cJ1,cJ2;
 
     //coordonnées du coin droit de la grille
-    int x1,y1;
+    public int x1,y1;
 
     //coordonnées actuelles du pion en mouvement
-    int x;
-    int y;
+    public int x;
+    public int y;
 
     // coordonnées x et y du centre des cases
-    int[] xcases =new int[9];
-    int[] ycases=new int[9];
-
-    
+    public int[] xcases =new int[9];
+    public int[] ycases=new int[9];
 
     Dessin() {
         super();
         cJ1=Color.RED;
         cJ2=Color.BLUE;
+
+        //Grille numérotée de gauche à droite et de haut en bas
         tableau = new int[9];
         Turn=1;
         lastPosition = new ArrayList<Integer> ();
@@ -76,7 +88,7 @@ class Dessin extends JPanel {
         
         // dessin du pion sélectionné en mouvement
         if (onMove){
-           if (typePion==1){
+           if (Turn==1){
                 g2.setColor(cJ1);
                 g2.drawOval(x-25, y-25,50,50);
            }
